@@ -1,0 +1,97 @@
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<title>Quiz</title>
+
+<style>
+div#test{ 
+  border:#5AB029 3px solid; 
+  padding:10px 40px 40px 40px; 
+  background-color:#E5FCE3; 
+  width:50%;}
+</style>
+<!-- 
+- The pos variable is used to record what the position the user is at in the test eg. question 3 out of 4.
+- The correct variable stores the number of questions answered correctly.
+- The test variable contains the ‘test’ div and the test_status variable is used to contain the ‘test_status’ heading which displays the user’s progress in the test.
+- The question variable will contain a question grabbed from an array.
+- The choice variable will contain the user’s selected answer for a question.
+- The choices variable will contain the possible answers that will be displayed to the user.
+- chA, chB, and chC variables will contain each possible answer (A, B, or C) in the multiple choice quiz.
+-->
+<script type="text/javascript">
+var pos = 0;
+var correct = 0;
+var test, test_status, question, choice, choices, chA, chB, chC;
+
+// Multidimensional array which contains the questions, the options for each question, and the answer key for each question.
+var questions = [
+  ["What is 36 + 42", "64", "78", "76", "B"],
+  ["What is 7 x 4?", "21", "27", "28", "C"],
+  ["What is 16 / 4?", "4", "6", "3", "A"],
+  ["What is 8 x 12?", "88", "112", "96", "C"]
+  ];
+
+// This quiz needs to get elements from the web page (the heading and the div) and then modify those elements several times.
+function get(x){
+  return document.getElementById(x);
+}
+
+// The renderQuestion function will be used to get the ‘test‘ div, check the user’s position in the quiz, and if they have not yet completed the quiz then they will be served different questions. The function will display the user’s progress and the actual question and options to the user. The user must choose an answer by selecting a radio button next to an answer and then click the ‘Submit Answer’ button.
+function renderQuestion(){
+  test = get("test");
+  if(pos >= questions.length){
+    test.innerHTML = "<h2>You got "+correct+" of "+questions.length+" questions correct</h2>";
+    get("test_status").innerHTML = "Test completed";
+    // resets the variable to allow users to restart the test
+    pos = 0;
+    correct = 0;
+    // stops rest of renderQuestion function running when test is completed
+    return false;
+  }
+  get("test_status").innerHTML = "Question "+(pos+1)+" of "+questions.length;
+  question = questions[pos][0];
+  chA = questions[pos][1];
+  chB = questions[pos][2];
+  chC = questions[pos][3];
+  test.innerHTML = "<h3>"+question+"</h3>";
+  // the += appends to the data we started on the line above
+  test.innerHTML += "<input type='radio' name='choices' value='A'> "+chA+"<br>";
+  test.innerHTML += "<input type='radio' name='choices' value='B'> "+chB+"<br>";
+  test.innerHTML += "<input type='radio' name='choices' value='C'> "+chC+"<br><br>";
+  test.innerHTML += "<button onclick='checkAnswer()'>Submit Answer</button>";
+}
+
+// The checkAnswer function is used to check the answer. While the quiz is incomplete, each user choice will be checked and compared with the correct answer associated with each question (stored in the questions array). At the end of this question being called, the renderQuestion will be called.
+function checkAnswer(){
+  // use getElementsByName because we have an array which it will loop through
+  choices = document.getElementsByName("choices");
+  for(var i=0; i<choices.length; i++){
+    if(choices[i].checked){
+      choice = choices[i].value;
+    }
+  }
+  // checks if answer matches the correct choice
+  if(choice == questions[pos][4]){
+    //each time there is a correct answer this value increases
+    correct++;
+  }
+  // changes position of which character user is on
+  pos++;
+  // then the renderQuestion function runs again to go to next question
+  renderQuestion();
+}
+
+
+window.addEventListener("load", renderQuestion, false);
+
+</script>
+
+</head>
+
+<body>
+<h2 id="test_status"></h2>
+<div id="test"></div>
+</body>
+</html>
